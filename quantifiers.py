@@ -10,3 +10,6 @@ every = RegularLanguage(name="every", chars=quant_chars, max_length=20,
 
 nall = RegularLanguage(name="not_all", chars=quant_chars, max_length=20, 
                         regex=notall_regex, neg_regex=all_regex)
+
+exactly_three = RegularLanguage(name="exactly_three", chars=quant_chars, max_length=20,
+                                regex='[1-3]*0[1-3]*0[1-3]*0[1-3]*')

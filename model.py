@@ -21,11 +21,15 @@ class Decider(nn.Module):
         self.loss_calc = nn.CrossEntropyLoss(reduction='mean')
         self.optimizer = torch.optim.Adam(self.parameters(), lr=1e-4)
     
-    def forward(self, sequences):
+    def forward(self, sequences, seq_lengths):
+        #print(sequences.shape)
+        idx_last_output = seq_lengths - sequences.shape[1] + 1
+        #print(idx_last_output)
+        #exit()
         # sequence: [batch_size, max_len, input_dimension]
         all_outputs, _ = self.lstm(sequences)
         # all_outputs: [batch_size, max_len, hidden_size=lstm_output_dimensions]
-        final_outputs = all_outputs[:, -1, :]
+        final_outputs = all_outputs[torch.arange(len(sequences), out=torch.LongTensor()), idx_last_output, :]
         # final_outputs: [batch_size, hidden_size]
         logits = self.classifier(final_outputs)
         # logits: [batch_size, 2]
@@ -60,8 +64,8 @@ def train_a_decider(model, num_epochs: int, batch_size: int,
                                                  batch_size=batch_size,
                                                  shuffle=True)
         # STEP (2): train and print accuracy of validation along the way.
-        for batch, labels in dataloader.__iter__():
-            logits = model.forward(batch)
+        for batch, labels, seq_lengths in dataloader.__iter__():
+            logits = model.forward(batch, seq_lengths)
             loss = model.loss(logits, labels)
             model.optimizer.zero_grad()
             loss.backward()
@@ -69,7 +73,7 @@ def train_a_decider(model, num_epochs: int, batch_size: int,
             training_loss += loss
         
         # STEP (3): validate this epoch
-        validation_logits = model.forward(data_validation.data)
+        validation_logits = model.forward(data_validation.data, data_validation.lengths)
         validation_predictions = model.classify(validation_logits)
         validation_accuracy = torch.eq(validation_predictions, data_validation.labels).double().mean()
         print("In epoch %d, training_loss = %f, validation accuracy = %f" % (current_epoch, training_loss, validation_accuracy))

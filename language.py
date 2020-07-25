@@ -39,12 +39,19 @@ class Language:
                 return string
     
     def generate_batch_data(self, num_datapoints: int, truth_value: bool) -> set:
+        '''
         dataset = set()
         num_iter = 0
         cutoff_iters = 1e6
         while len(dataset) < num_datapoints and num_iter < cutoff_iters:
             example = self.generate_example(truth_value)
             dataset.add(example)
+        return dataset
+        '''
+        dataset = []
+        while len(dataset) < num_datapoints:
+            example = self.generate_example(truth_value)
+            dataset.append(example)
         return dataset
 
 

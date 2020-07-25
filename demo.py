@@ -2,8 +2,8 @@ from model import *
 import random
 from dataset import *
 
-num_data_points = 5000
-seq_length = 5
+num_data_points = 4
+seq_length = 15
 
 input_data = torch.zeros(num_data_points, seq_length, 2)
 labels = torch.zeros(num_data_points, dtype=torch.long)
@@ -29,7 +29,7 @@ for i in range(num_data_points):
     else:
         input_data[i] = generate_negative_example()
         labels[i] = 1
-    #print(input_data[i], truth_value)
+    print(input_data[i], truth_value)
 
 num_training = int(num_data_points * 0.8)
 num_validation = num_data_points - num_training
