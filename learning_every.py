@@ -16,8 +16,14 @@ exit()
 training_dataset = make_dataset(zero_star, zero_star_mapping, 1000, 1000)
 validation_dataset = make_dataset(zero_star, zero_star_mapping, 200, 200)
 '''
+
 training_dataset = make_dataset(exactly_three, mapping, 1000, 1000)
 validation_dataset = make_dataset(exactly_three, mapping, 200, 200)
+
+'''
+training_dataset = make_dataset(every, mapping, 1000, 1000)
+validation_dataset = make_dataset(every, mapping, 200, 200)
+'''
 
 
 decider = Decider(input_dimension=4)

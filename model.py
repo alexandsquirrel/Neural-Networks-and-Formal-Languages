@@ -22,14 +22,12 @@ class Decider(nn.Module):
         self.optimizer = torch.optim.Adam(self.parameters(), lr=1e-4)
     
     def forward(self, sequences, seq_lengths):
-        #print(sequences.shape)
-        idx_last_output = seq_lengths - sequences.shape[1] + 1
-        #print(idx_last_output)
-        #exit()
+        idx_last_output = seq_lengths - 1
         # sequence: [batch_size, max_len, input_dimension]
-        all_outputs, _ = self.lstm(sequences)
-        # all_outputs: [batch_size, max_len, hidden_size=lstm_output_dimensions]
-        final_outputs = all_outputs[torch.arange(len(sequences), out=torch.LongTensor()), idx_last_output, :]
+        # input to lstm: [max_len, batch_size, input_dimension]
+        all_outputs, _ = self.lstm(torch.transpose(sequences, 0, 1))
+        # all_outputs: [max_len, batch_size, hidden_size=lstm_output_dimensions]
+        final_outputs = all_outputs[idx_last_output, torch.arange(len(sequences), out=torch.LongTensor()), :]
         # final_outputs: [batch_size, hidden_size]
         logits = self.classifier(final_outputs)
         # logits: [batch_size, 2]

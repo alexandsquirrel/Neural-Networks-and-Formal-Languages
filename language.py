@@ -51,7 +51,8 @@ class Language:
         dataset = []
         while len(dataset) < num_datapoints:
             example = self.generate_example(truth_value)
-            dataset.append(example)
+            if example:
+                dataset.append(example)
         return dataset
 
 
