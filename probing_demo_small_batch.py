@@ -14,6 +14,15 @@ validation_inputs = make_dataset(exactly_three, mapping, 100, 100)
 # TODO: try more sophisticated probe (?)
 # TODO: try at least three
 # TODO: look at every intermediate hidden state
+# classification vs. regression ?
+# does the model behave like DFAs (extract states)
+
+# look into nn.TimeDistributed
+
+# Next steps:
+#   write better code :)
+#   probe both classification & regression
+#   probe the entire timeline
 class LinearModel(torch.nn.Module):
     def __init__(self):
         super(LinearModel, self).__init__()
