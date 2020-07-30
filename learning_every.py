@@ -27,5 +27,5 @@ validation_dataset = make_dataset(every, mapping, 200, 200)
 
 
 decider = Decider(input_dimension=4)
-train_a_decider(model=decider, num_epochs=100, batch_size=8,
+train_a_decider(model=decider, num_epochs=10, batch_size=8,
                 data_training=training_dataset, data_validation=validation_dataset)

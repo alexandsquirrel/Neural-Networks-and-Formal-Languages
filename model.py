@@ -20,6 +20,8 @@ class Decider(nn.Module):
         # TODO: move to training
         self.loss_calc = nn.CrossEntropyLoss(reduction='mean')
         self.optimizer = torch.optim.Adam(self.parameters(), lr=1e-4)
+        # for probing purposes:
+        self.hidden_rep = None
     
     def forward(self, sequences, seq_lengths):
         idx_last_output = seq_lengths - 1
@@ -31,6 +33,7 @@ class Decider(nn.Module):
         # final_outputs: [batch_size, hidden_size]
         logits = self.classifier(final_outputs)
         # logits: [batch_size, 2]
+        self.hidden_rep = final_outputs # probing
         return logits
 
     def classify(self, logits):
@@ -62,7 +65,7 @@ def train_a_decider(model, num_epochs: int, batch_size: int,
                                                  batch_size=batch_size,
                                                  shuffle=True)
         # STEP (2): train and print accuracy of validation along the way.
-        for batch, labels, seq_lengths in dataloader.__iter__():
+        for batch, labels, seq_lengths in dataloader:
             logits = model.forward(batch, seq_lengths)
             loss = model.loss(logits, labels)
             model.optimizer.zero_grad()
