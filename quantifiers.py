@@ -1,6 +1,7 @@
 from regular_language import RegularLanguage
 
 quant_chars = ['0', '1', '2', '3']
+quant_mapping = {'0':0, '1':1, '2':2, '3':3}
 
 all_regex = '[023]*'
 notall_regex = '[0-3]*1[0-3]*'

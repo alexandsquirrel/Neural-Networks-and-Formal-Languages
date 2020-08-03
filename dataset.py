@@ -2,7 +2,6 @@ import torch
 from language import Language
 
 class LanguageDataset(torch.utils.data.Dataset):
-
     def __init__(self, data, labels, lengths):
         self.data = data
         self.labels = labels
