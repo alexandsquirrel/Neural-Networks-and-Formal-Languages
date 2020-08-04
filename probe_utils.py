@@ -22,8 +22,6 @@ def train_a_probe(probe, data_training, num_epochs, loss_function, batch_size=4)
                                                  batch_size=batch_size,
                                                  shuffle=True)
         for hidden_reps, labels in dataloader:
-            labels = labels.unsqueeze(0).transpose(0, 1)
-            labels = labels.float()
             optimizer.zero_grad()
             preds = probe.forward(hidden_reps)
             loss = loss_function(preds, labels)
@@ -36,12 +34,12 @@ def print_eval_results(probe, data_eval):
     probe.eval()
     for hidden_rep, label in data_eval:
         pred = probe.forward(hidden_rep)
-        print(pred.item(),"vs.", label)
+        print(pred,"vs.", label)
 
 def extract_hidden_states_and_labels(decider, input_data, label_of):
     decider.eval()
     # TODO: support entire sequence
     decider.forward(input_data.data, seq_lengths=input_data.lengths)
     hidden_reps = decider.hidden_rep.detach()
-    labels = [float(label_of(sequence)) for sequence in input_data.data]
+    labels = [label_of(sequence) for sequence in input_data.data]
     return ProbeDataset(hidden_reps, labels)

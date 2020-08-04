@@ -21,9 +21,14 @@ training_dataset = extract_hidden_states_and_labels(exactly_three_decider, train
 validation_inputs = make_dataset(exactly_three, quant_mapping, 100, 100)
 validation_dataset = extract_hidden_states_and_labels(exactly_three_decider, validation_inputs, num_AB)
 
+def reg_loss_function(x, y):
+    y = y.unsqueeze(0).transpose(0, 1).float()
+    mse_loss_function = torch.nn.MSELoss()
+    return mse_loss_function(x, y)
+
 train_a_probe(probe=regression_probe,
               data_training=training_dataset,
               num_epochs=40,
-              loss_function=torch.nn.MSELoss())
+              loss_function=reg_loss_function)
 
 print_eval_results(regression_probe, validation_dataset)
