@@ -31,11 +31,11 @@ class Language:
     def generate_example(self, truth_value: bool) -> str:
         pass
 
-    def _generate_negative_example_generic(self) -> str:
-        # trail-and-error. could have a more sophisticated method!
+    def _generate_example_generic(self, truth_value: bool) -> str:
+        # trail and error method.
         while True:
             string = random_string(self._max_length, self._chars)
-            if not self.verify(string):
+            if self.verify(string) == truth_value:
                 return string
     
     def generate_batch_data(self, num_datapoints: int, truth_value: bool) -> set:

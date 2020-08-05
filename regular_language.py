@@ -22,7 +22,9 @@ class RegularLanguage(Language):
             return self._generate_no_match()
 
     def _generate_match(self) -> str:
-        return exrex.getone(self._regex, self._max_length)
+        #return exrex.getone(self._regex, self._max_length)
+        # temporarily degrade also to trail-and-error
+        return self._generate_example_generic(True)
     
     # rejection sampling
     def _generate_no_match(self) -> str:
@@ -30,4 +32,4 @@ class RegularLanguage(Language):
             # if the user has supplied with the complement regex, then we can generate deterministically!
             return exrex.getone(self._neg_regex, self._max_length)
         else:
-            return self._generate_negative_example_generic()
+            return self._generate_example_generic(False)
