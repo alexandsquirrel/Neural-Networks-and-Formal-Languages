@@ -20,6 +20,9 @@ def exactly_n(n):
     regex = '[1-3]*' + n * '0[1-3]*'
     return RegularLanguage(name=name, chars=quant_chars, max_length=20, regex=regex)
 
+'''
+For natural language references.
+'''
 exactly_zero = exactly_n(0)
 exactly_one = exactly_n(1)
 exactly_two = exactly_n(2)

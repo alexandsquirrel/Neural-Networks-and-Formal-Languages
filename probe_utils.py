@@ -12,7 +12,7 @@ class ProbeDataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.data)
 
-def train_a_probe(probe, data_training, num_epochs, loss_function, batch_size=4):
+def train_a_probe(probe, data_training, num_epochs, loss_function, batch_size=4, data_validation=None):
     optimizer = torch.optim.Adam(probe.parameters(), lr=0.001)
     current_epoch = 0
     while current_epoch < num_epochs:
@@ -29,6 +29,14 @@ def train_a_probe(probe, data_training, num_epochs, loss_function, batch_size=4)
             loss.backward()
             optimizer.step()
         print("in epoch %d, loss = %f" % (current_epoch, training_loss))
+        
+        # Note: the following validation logic works ONLY for classification probes.
+        if data_validation is not None:
+            validation_logits = probe(data_validation.data)
+            softmax = torch.nn.Softmax(1)
+            validation_predictions = torch.argmax(softmax(validation_logits), dim=1)
+            validation_accuracy = torch.eq(validation_predictions, torch.Tensor(data_validation.labels)).double().mean()
+            print("validation accuracy =", validation_accuracy.item())
 
 def print_eval_results(probe, data_eval):
     probe.eval()

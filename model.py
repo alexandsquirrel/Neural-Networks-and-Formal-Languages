@@ -66,7 +66,7 @@ def train_a_decider(model, num_epochs: int, batch_size: int,
                                                  shuffle=True)
         # STEP (2): train and print accuracy of validation along the way.
         for batch, labels, seq_lengths in dataloader:
-            logits = model.forward(batch, seq_lengths)
+            logits = model(batch, seq_lengths)
             loss = model.loss(logits, labels)
             model.optimizer.zero_grad()
             loss.backward()
@@ -74,7 +74,7 @@ def train_a_decider(model, num_epochs: int, batch_size: int,
             training_loss += loss
         
         # STEP (3): validate this epoch
-        validation_logits = model.forward(data_validation.data, data_validation.lengths)
+        validation_logits = model(data_validation.data, data_validation.lengths)
         validation_predictions = model.classify(validation_logits)
         validation_accuracy = torch.eq(validation_predictions, data_validation.labels).double().mean()
         print("In epoch %d, training_loss = %f, validation accuracy = %f" % (current_epoch, training_loss, validation_accuracy))
