@@ -3,10 +3,6 @@ from dataset import *
 from quantifiers import *
 import sys
 
-hidden_size = 12
-exactly_three_decider = Decider(input_dimension=4, hidden_size=12)
-exactly_three_decider.load_state_dict(torch.load('ckpt/best.pt'))
-
 '''
 Hypothesis #1: does the model do a multi-way classification?
 zero - one - two - three - more_than_three
@@ -20,6 +16,10 @@ Usage: supply n as a command-line argument.
 '''
 
 def run_multi_classification_probe(n, verbose=True):
+    hidden_size = 12
+    exactly_three_decider = Decider(input_dimension=4, hidden_size=12)
+    exactly_three_decider.load_state_dict(torch.load('ckpt/best.pt'))
+
     classification_probe = torch.nn.Linear(hidden_size, n + 2)
 
     def num_AB(seq):
@@ -40,11 +40,12 @@ def run_multi_classification_probe(n, verbose=True):
         cross_entropy_loss_function = torch.nn.CrossEntropyLoss(reduction='mean')
         return cross_entropy_loss_function(x, y)
 
-    train_a_probe(probe=classification_probe,
-                data_training=training_dataset,
-                data_validation=validation_dataset,
-                num_epochs=20,
-                loss_function=h1_loss_function)
+    loss, val_acc = train_a_probe(probe=classification_probe,
+                                    data_training=training_dataset,
+                                    data_validation=validation_dataset,
+                                    num_epochs=20,
+                                    loss_function=h1_loss_function,
+                                    verbose=verbose)
 
     '''
     When the probe does not converge nicely, we are interested in the kind
@@ -52,8 +53,10 @@ def run_multi_classification_probe(n, verbose=True):
     '''
     if verbose:
         print_eval_results(classification_probe, validation_dataset)
+    
+    return loss, val_acc
 
 
 if __name__ == "__main__":
     n = int(sys.argv[1])
-    run_multi_classification_probe(n)
+    run_multi_classification_probe(n, verbose=False)
